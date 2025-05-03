@@ -27,8 +27,10 @@ ENV PATH="/app:${PATH}" \
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y curl ca-certificates gosu; \
-	curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -; \
-	apt-get install -y nodejs; \
+	if [ "$(uname -s)" = "Linux" ] && [ "$(dpkg --print-architecture)" = "arm64" ]; then \
+	  curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -; \
+	  apt-get install -y nodejs; \
+	fi; \
 	rm -rf /var/lib/apt/lists/*; \
 	gosu nobody true
 
