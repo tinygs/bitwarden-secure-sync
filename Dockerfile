@@ -32,10 +32,12 @@ RUN set -eux; \
 
 VOLUME ["/app/config", "/app/data"]
 
+ENV UMASK=077
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["/bin/sh", "docker-entrypoint.sh"]
 
 LABEL org.opencontainers.image.authors="aron@marinelli.nl"
 LABEL org.opencontainers.image.url="https://github.com/AronMarinelli/bitwarden-secure-sync"
 LABEL org.opencontainers.image.title="Bitwarden Secure Sync"
-LABEL org.opencontainers.image.description ="A simple tool that can be used to export your Bitwarden vault to a local file periodically."
+LABEL org.opencontainers.image.description="A simple tool that can be used to export your Bitwarden vault to a local file periodically."
