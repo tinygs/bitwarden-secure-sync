@@ -45,7 +45,25 @@ public class BitwardenClientDownloadLogic : IBitwardenClientDownloadLogic
         {
             if (RuntimeInformation.OSArchitecture == Architecture.Arm64)
             {
-                Console.WriteLine("Detected Linux arm64. Installing Bitwarden CLI using npm...");
+                Console.WriteLine("Detected Linux arm64. Fixing npm permissions and installing Bitwarden CLI using npm...");
+                // Intentar corregir permisos de la carpeta /.npm si existe
+                if (Directory.Exists("/.npm"))
+                {
+                    var chownProcess = new System.Diagnostics.Process
+                    {
+                        StartInfo = new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = "chown",
+                            Arguments = "-R 99:100 /.npm",
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        }
+                    };
+                    chownProcess.Start();
+                    chownProcess.WaitForExit();
+                }
                 var process = new System.Diagnostics.Process
                 {
                     StartInfo = new System.Diagnostics.ProcessStartInfo
