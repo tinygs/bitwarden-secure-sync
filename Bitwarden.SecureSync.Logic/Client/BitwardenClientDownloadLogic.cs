@@ -43,8 +43,35 @@ public class BitwardenClientDownloadLogic : IBitwardenClientDownloadLogic
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
+            if (RuntimeInformation.OSArchitecture == Architecture.Arm64)
+            {
+                Console.WriteLine("Detected Linux arm64. Installing Bitwarden CLI using npm...");
+                var process = new System.Diagnostics.Process
+                {
+                    StartInfo = new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = "npm",
+                        Arguments = "install -g @bitwarden/cli",
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    }
+                };
+                process.Start();
+                string output = await process.StandardOutput.ReadToEndAsync();
+                string error = await process.StandardError.ReadToEndAsync();
+                process.WaitForExit();
+                if (process.ExitCode != 0)
+                {
+                    throw new Exception($"Error installing Bitwarden CLI with npm: {error}");
+                }
+                Console.WriteLine(output);
+                Console.WriteLine("Bitwarden CLI successfully installed with npm for arm64.");
+                return;
+            }
             downloadUrl = LINUX_CLIENT_URL;
-            clientVersion = CLIENT_VERSION_LINUX;   
+            clientVersion = CLIENT_VERSION_LINUX;
         }
         else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
