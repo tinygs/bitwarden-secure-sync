@@ -18,6 +18,7 @@ jobs:
             version: latest
             args: "--login-server ${{ secrets.TAILSCALE_LOGIN_SERVER }}"
             hostname: "github-ci"
+            use-cache: true
       - name: Test curl to registry server
         uses: jtalk/url-health-check-action@v4
         with:
